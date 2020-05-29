@@ -1,0 +1,76 @@
+server:
+  port: 8013
+  tomcat:
+    uri-encoding: UTF-8
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+    url: jdbc:mysql://imdata.rwlb.rds.aliyuncs.com:3306/imdata?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8
+    driver-class-name: com.mysql.jdbc.Driver
+    username: im_public
+    password: '%%aYNM$$'
+  jpa:
+    #    hibernate:
+    #      ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: false
+
+
+
+  # Redis数据库索引（默认为0）
+  redis:
+    database: 0
+    host: r-j6clppyyqwzgf2rmu0pd.redis.rds.aliyuncs.com
+    port: 6379
+    password: '%$KHh%5a'
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
+    timeout: 6000
+  #HTTP 请求乱码
+  encoding:
+    force: true
+    charset: UTF-8
+    enabled: true
+
+#==========================================
+# Http配置
+#==========================================
+http:
+  socket:
+    timeout: 300000
+  connection:
+    timeout: 8000
+    request:
+      timeout: 8000
+
+  #设置http请求编码，解决乱码问题
+
+  # Redis数据库索引（默认为0）
+  #  spring.redis.database=0
+  # Redis服务器地址
+  # spring.redis.host=192.168.0.24
+  # Redis服务器连接端口
+  #spring.redis.port=6379
+  # Redis服务器连接密码（默认为空）
+  #spring.redis.password=
+  # 连接池最大连接数（使用负值表示没有限制）
+  # spring.redis.pool.max-active=200
+  # 连接池最大阻塞等待时间（使用负值表示没有限制）
+  #spring.redis.pool.max-wait=-1
+  # 连接池中的最大空闲连接
+  #spring.redis.pool.max-idle=10
+  # 连接池中的最小空闲连接
+  #spring.redis.pool.min-idle=0
+  # 连接超时时间（毫秒）
+  #spring.redis.timeout=1000
+logging:
+  file: server-task-1.2.log
+  path: logs/
+
+imserver:
+  url: http://47.91.182.54:8088/api/v1/message/redPacketMsg
