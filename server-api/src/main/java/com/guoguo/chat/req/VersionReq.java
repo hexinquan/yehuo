@@ -9,4 +9,5 @@ import lombok.Setter;
 public class VersionReq extends BasePageReq {
     private Integer status;
     private Integer releaseStatus;
+    private Integer appType;
 }

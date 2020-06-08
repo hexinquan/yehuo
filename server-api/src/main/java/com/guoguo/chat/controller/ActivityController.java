@@ -6,6 +6,7 @@ import com.guoguo.chat.repository.ActivityRepository;
 import com.guoguo.chat.req.ActivityReq;
 import com.guoguo.chat.service.ActivtiyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,19 +27,22 @@ public class ActivityController {
 
     @PostMapping("/list")
     public RestResult list(@RequestBody ActivityReq activityReq){
+        Sort sort = new Sort(Sort.Direction.DESC,"createTime"); //创建时间降序排序
         if(activityReq.getStatus()!=null){
             if(activityReq.getStatus().intValue()==0){
-                Sort sort = new Sort(Sort.Direction.DESC,"createTime"); //创建时间降序排序
                 List<Activity> all = activityRepository.findAll(sort);
                 return RestResult.ok(all);
             }
             if(activityReq.getStatus().intValue()==4){
-                List<Activity> activitieList = activtiyService.findAllByStatus(1);
-                List<Activity> activities = activtiyService.findAllByStatus(3);
+                List<Activity> activitieList = activtiyService.findAllByStartTimeStatus(1);
+                List<Activity> activities = activtiyService.findAllByEndTimeStatus(3);
                 activitieList.addAll(activities);
                 return RestResult.ok(activitieList);
             }
-            List<Activity> allByStatus = activtiyService.findAllByStatus(activityReq.getStatus());
+            Activity activity = new Activity();
+            activity.setStatus(activityReq.getStatus());
+            Example<Activity> of = Example.of(activity);
+            List<Activity> allByStatus = activityRepository.findAll(of,sort);
             return RestResult.ok(allByStatus);
         }
         return RestResult.ok(null);

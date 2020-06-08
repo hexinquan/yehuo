@@ -15,7 +15,12 @@ public class ActivtiyServiceImpl implements ActivtiyService {
     ActivityRepository activityRepository;
 
     @Override
-    public List<Activity> findAllByStatus(int status) {
-        return activityRepository.findAllByStatus(status);
+    public List<Activity> findAllByStartTimeStatus(int status) {
+        return activityRepository.findAllByStartTimeStatus(status);
     }
+    @Override
+    public List<Activity> findAllByEndTimeStatus(int status) {
+        return activityRepository.findAllByEndTimeStatus(status);
+    }
+
 }
