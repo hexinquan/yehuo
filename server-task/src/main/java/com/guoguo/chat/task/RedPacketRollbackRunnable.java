@@ -102,41 +102,30 @@ public class RedPacketRollbackRunnable implements Runnable {
                             accountRecordRepository.saveAndFlush(accountRecord);
                         }
                         if (RedTypeEnums.LUCK.getCode().intValue() == redPacket.getRedType().intValue()) {
-//                            RedisUtil redisUtil = new RedisUtil(redisTemplate);
-//                            //已经分配好的手气红包
-//                            List<CacheRedpacketVO> cacheRedpacketVOList =
-//                                    (List<CacheRedpacketVO>) redisUtil.get(redPacket.getId());
-//                            log.info("群聊手气红包缓存:"+cacheRedpacketVOList);
-//                            if (cacheRedpacketVOList != null && cacheRedpacketVOList.size() > 0) {
-//                                Integer redBalance = 0;
-//                                for (int i = 0; i < cacheRedpacketVOList.size(); i++) {
-//                                    redBalance = redBalance + cacheRedpacketVOList.get(i).getAmount();
-//                                }
-                                log.info("群聊手气红包过期退还:" + redPacket);
-                                log.info("群聊手气红包过期退还金额为:" + redPacket.getRedBalance());
-                                int balanceAmount = user.getBalanceAmount() +  redPacket.getRedBalance();
-                                user.setBalanceAmount(balanceAmount);
-                                userRepository.saveAndFlush(user);
-                                AccountRecord accountRecord = new AccountRecord();
-                                accountRecord.setAmount( redPacket.getRedBalance());
-                                accountRecord.setCreateTime(System.currentTimeMillis());
-                                accountRecord.setFlow(AmountFlowTypeEnums.FLOW_IN.getCode());
-                                accountRecord.setId(UUID.randomUUID().toString());
-                                accountRecord.setRecordType(AccountRecordTypeEnums.RED_TYPE.getCode());
-                                accountRecord.setTargetName(redPacket.getTargetName());
-                                accountRecord.setUid(redPacket.getSenderId());
-                                accountRecord.setBalanceAmount(balanceAmount);
-                                accountRecord.setRecordTypeId(redPacket.getId());
-                                accountRecord.setRedStatus(RedStatusEnums.GIVE_BACK.getCode());
-                                accountRecord.setAuditStatus(0);
-                                accountRecordRepository.saveAndFlush(accountRecord);
-                           // }
+                                if(redPacket.getRedBalance()>0){
+                                    log.info("群聊手气红包过期退还:" + redPacket);
+                                    log.info("群聊手气红包过期退还金额为:" + redPacket.getRedBalance());
+                                    int balanceAmount = user.getBalanceAmount() +  redPacket.getRedBalance();
+                                    user.setBalanceAmount(balanceAmount);
+                                    userRepository.saveAndFlush(user);
+                                    AccountRecord accountRecord = new AccountRecord();
+                                    accountRecord.setAmount( redPacket.getRedBalance());
+                                    accountRecord.setCreateTime(System.currentTimeMillis());
+                                    accountRecord.setFlow(AmountFlowTypeEnums.FLOW_IN.getCode());
+                                    accountRecord.setId(UUID.randomUUID().toString());
+                                    accountRecord.setRecordType(AccountRecordTypeEnums.RED_TYPE.getCode());
+                                    accountRecord.setTargetName(redPacket.getTargetName());
+                                    accountRecord.setUid(redPacket.getSenderId());
+                                    accountRecord.setBalanceAmount(balanceAmount);
+                                    accountRecord.setRecordTypeId(redPacket.getId());
+                                    accountRecord.setRedStatus(RedStatusEnums.GIVE_BACK.getCode());
+                                    accountRecord.setAuditStatus(0);
+                                    accountRecordRepository.saveAndFlush(accountRecord);
+                            }
                         }
                     }
                 });
             }
-            // 0 */1 * * * ?  每分钟执行
-            // 0/1 * * * * ? 每秒执行
         }catch (Exception e){
             log.error("定时红包退还错误",e);
         }
