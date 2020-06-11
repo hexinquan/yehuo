@@ -262,9 +262,11 @@ public class RedPacketServiceImpl implements RedPacketService {
         List<CacheRedpacketVO> cacheRedpacketVOList = new ArrayList<>();
         //拼手气算法
         List<Integer> redPackets = redPacketUtil.splitRedPacket(redPacketReq.getAmount(), redPacketReq.getCount());
+        log.info("计算出来的手气红包:"+JSON.toJSONString(redPackets));
         for (int i=0;i<redPackets.size();i++){
             redPacketReq.setAmount(redPackets.get(i));//设置随机的金额
             CacheRedpacketVO cacheRedpacketVO = buildCacheList(redPacketReq,sendTime);
+            log.info("cacheRedpacketVO:"+JSON.toJSONString(cacheRedpacketVO));
             cacheRedpacketVOList.add(cacheRedpacketVO);
         }
         redpacketRepository.saveAndFlush(redPacket);
@@ -274,6 +276,7 @@ public class RedPacketServiceImpl implements RedPacketService {
         //账变记录
         this.buildAccountRecord(AmountFlowTypeEnums.FLOW_OUT,AccountRecordTypeEnums.RED_TYPE,decAmount,
                 redPacketReq.getSenderId(),redPacket.getTargetName(),balanaceAmount,redPacket.getId());
+        log.info("缓存手气红包:".concat(JSON.toJSONString(cacheRedpacketVOList)));
         redisUtil.set(uuid, cacheRedpacketVOList, 86400);//红包24小时失效时间
         //需要推送消息
         ImServerRespVO imServerRespVO = restService.doPost(imMessageUrl, buildSendPacketMsg(redPacket, ImRedTypeEnums.SEND_RED_PACKET,user),
